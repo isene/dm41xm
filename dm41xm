@@ -1,0 +1,125 @@
+#!/usr/bin/ruby
+# encoding: utf-8
+
+def help
+puts <<HELPTEXT
+
+This program is used in conjunction with the DM41X calculator.
+For more information about the DM41X, see https://www.swissmicros.com
+
+The program extracts an ASCII XM file from a DM41X state file.
+
+Usage: 41x [options]
+    -f, --file DM41X-file            Specify the DM41X file you want to extract from
+    -a, --ascii ASCII-file           Specify the XM ASCII file you want to extract
+    -h                               Display SHORT help text
+        --help                       Display LONG help text
+
+Example: 41x -f mystatefile.d41 -a MYFILE
+
+This would extract the XM ASCII file "MYFILE" from the statefile "mystatefile.d41".
+
+Version: 0.1 (2020-03-27)
+License: Public domain
+
+HELPTEXT
+end
+
+
+# Load modules
+begin
+    require 'rubygems'
+rescue
+end
+
+require 'optparse'
+
+# Handle the command line options
+options = {}
+
+optparse = OptionParser.new do |opts|
+    # Set a banner, displayed at the top of the help screen.
+  opts.banner = "Usage: 41x [options]"
+
+    # Define the options, and what they do
+    opts.on('-f', '--file DM41X-file', 'Specify the DM41X file you want to extract from') do |f|
+      $file = f
+    end
+    opts.on('-a', '--ascii ASCII-file', 'Specify the XM ASCII file you want to extract') do |a|
+      $ascii = a
+    end
+
+    opts.on('-h', 'Display SHORT help text') do
+	    puts opts
+	    exit
+    end
+
+    opts.on('--help', 'Display LONG help text') do
+	    help
+	    exit
+    end
+end
+
+optparse.parse!
+
+filecontent = File.read($file)
+filecontent.sub!('DM41', '')
+filecontent.sub!(/\nA:.*/m, '')
+filecontent.gsub!(/\n.{2,3}  /, '')
+filecontent.gsub!(/  /, '')
+filechars = filecontent.scan(/../)
+
+chrarray = [
+  # ascii character 0-127 (unused and control characters are filled with nice ones)
+    "█", "α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", 
+    "κ", "λ", "μ", "∠", "ν", "ξ", "ο", "π", "ρ", "σ", 
+    "τ", "υ", "φ", "χ", "ψ", "ω", "ϊ", "ϋ", "←", "≠", 
+    "→", "↔", " ", "!", "\"", "#", "$", "%", "&", "'", 
+    "(", ")", "*", "+", ",", "-", ".", "/", "0", "1", 
+    "2", "3", "4", "5", "6", "7", "8", "9", ":", ";", 
+    "<", "=", ">", "?", "@", "A", "B", "C", "D", "E", 
+    "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", 
+    "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", 
+    "Z", "[", "\\", "]", "^", "_", "`", "a", "b", "c", 
+    "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", 
+    "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", 
+    "x", "y", "z", "{", "|", "}", "~", "",
+  # ascii character 128-255 (unused characters are filled with nice ones)
+    "€", "∞", "‚", "ƒ", "„", "…", "†", "‡", "ˆ", "‰", 
+    "Š", "‹", "Œ", "∑", "Ž", "≤", "≥", "‘", "’", "“", 
+    "”", "•", "–", "—", "˜", "™", "š", "›", "œ", "∫", 
+    "ž", "Ÿ", "∩", "¡", "¢", "£", "¤", "¥", "¦", "§", 
+    "¨", "©", "ª", "«", "¬", "∪", "®", "¯", "°", "±", 
+    "²", "³", "´", "µ", "¶", "·", "¸", "¹", "º", "»", 
+    "¼", "½", "¾", "¿", "À", "Á", "Â", "Ã", "Ä", "Å", 
+    "Æ", "Ç", "È", "É", "Ê", "Ë", "Ì", "Í", "Î", "Ï", 
+    "Ð", "Ñ", "Ò", "Ó", "Ô", "Õ", "Ö", "×", "Ø", "Ù", 
+    "Ú", "Û", "Ü", "Ý", "Þ", "ß", "à", "á", "â", "ã", 
+    "ä", "å", "æ", "ç", "è", "é", "ê", "ë", "ì", "í", 
+    "î", "ï", "ð", "ñ", "ò", "ó", "ô", "õ", "ö", "÷", 
+    "ø", "ù", "ú", "û", "ü", "ý", "þ", "ÿ"]
+
+output = ""
+filechars.each do |char|
+  output += chrarray[char.to_i(16)]
+end
+
+output.sub!(/#{$ascii}.*/, '')
+output.sub!(/.*ÿ/, '')
+output = output[0...-7]
+o = ""
+while output.length > 0
+  o += output[output.length-7,output.length]
+  output = output[0...-7]
+end
+o.gsub!(/ο/, '')
+o.gsub!(/█/, '')
+
+for i in 1..12
+  o.gsub!(/#{chrarray[i]}/, "\n")
+end
+
+o.gsub!(/^\n/, '')
+
+puts "File: #{$ascii}"
+puts o
