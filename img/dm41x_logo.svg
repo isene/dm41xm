@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect x="0" y="0" width="200" height="200" fill="#1a1a1a"/>
+  
+  <!-- Calculator body (DM41X style) -->
+  <rect x="50" y="40" width="100" height="140" rx="8" fill="#2c2c2c" stroke="#444" stroke-width="2"/>
+  
+  <!-- LCD display -->
+  <rect x="60" y="55" width="80" height="25" rx="3" fill="#0a4d0a" stroke="#333" stroke-width="1"/>
+  <text x="100" y="72" font-family="monospace" font-size="10" fill="#00ff00" text-anchor="middle">12,345.6789</text>
+  
+  <!-- Keyboard matrix -->
+  <g fill="#1a1a1a" stroke="#666" stroke-width="1">
+    <!-- Row 1 -->
+    <rect x="62" y="90" width="12" height="8" rx="1"/>
+    <rect x="78" y="90" width="12" height="8" rx="1"/>
+    <rect x="94" y="90" width="12" height="8" rx="1"/>
+    <rect x="110" y="90" width="12" height="8" rx="1"/>
+    <rect x="126" y="90" width="12" height="8" rx="1"/>
+    
+    <!-- Row 2 -->
+    <rect x="62" y="102" width="12" height="8" rx="1"/>
+    <rect x="78" y="102" width="12" height="8" rx="1"/>
+    <rect x="94" y="102" width="12" height="8" rx="1"/>
+    <rect x="110" y="102" width="12" height="8" rx="1"/>
+    <rect x="126" y="102" width="12" height="8" rx="1"/>
+    
+    <!-- Row 3 -->
+    <rect x="62" y="114" width="12" height="8" rx="1"/>
+    <rect x="78" y="114" width="12" height="8" rx="1"/>
+    <rect x="94" y="114" width="12" height="8" rx="1"/>
+    <rect x="110" y="114" width="12" height="8" rx="1"/>
+    <rect x="126" y="114" width="12" height="8" rx="1"/>
+    
+    <!-- Row 4 -->
+    <rect x="62" y="126" width="12" height="8" rx="1"/>
+    <rect x="78" y="126" width="12" height="8" rx="1"/>
+    <rect x="94" y="126" width="12" height="8" rx="1"/>
+    <rect x="110" y="126" width="12" height="8" rx="1"/>
+    <rect x="126" y="126" width="12" height="8" rx="1"/>
+  </g>
+  
+  <!-- Key labels (simplified) -->
+  <g font-family="monospace" font-size="6" fill="#fff" text-anchor="middle">
+    <text x="68" y="96">Σ+</text>
+    <text x="84" y="96">7</text>
+    <text x="100" y="96">8</text>
+    <text x="116" y="96">9</text>
+    <text x="132" y="96">÷</text>
+    
+    <text x="68" y="108">1/x</text>
+    <text x="84" y="108">4</text>
+    <text x="100" y="108">5</text>
+    <text x="116" y="108">6</text>
+    <text x="132" y="108">×</text>
+  </g>
+  
+  <!-- File transfer animation -->
+  <g transform="translate(100, 150)">
+    <!-- Source file -->
+    <rect x="-35" y="-8" width="25" height="16" fill="#4a90e2" rx="2" opacity="0.8"/>
+    <text x="-22.5" y="0" font-family="monospace" font-size="7" fill="#fff" text-anchor="middle">.d41</text>
+    
+    <!-- Arrow with animation -->
+    <path d="M -8,-2 L 8,-2 L 4,-6 M 8,-2 L 4,2" stroke="#00ff00" stroke-width="2" fill="none">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+    </path>
+    
+    <!-- Target file -->
+    <rect x="12" y="-8" width="25" height="16" fill="#00ff00" rx="2" opacity="0.8"/>
+    <text x="24.5" y="0" font-family="monospace" font-size="7" fill="#000" text-anchor="middle">XM</text>
+  </g>
+  
+  <!-- Pulsing border effect -->
+  <rect x="50" y="40" width="100" height="140" rx="8" fill="none" stroke="#00ff00" stroke-width="1" opacity="0">
+    <animate attributeName="opacity" values="0;0.8;0" dur="3s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-width" values="1;3;1" dur="3s" repeatCount="indefinite"/>
+  </rect>
+  
+  <!-- Text -->
+  <text x="100" y="192" font-family="monospace" font-size="16" fill="#fff" text-anchor="middle" font-weight="bold">dm41xm</text>
+  <text x="100" y="204" font-family="monospace" font-size="9" fill="#888" text-anchor="middle">DM41X File Extractor</text>
+</svg>
