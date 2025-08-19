@@ -7,6 +7,7 @@
 [![Stay Amazing](https://img.shields.io/badge/Stay-Amazing-blue.svg)](https://isene.org)
 
 <img src="img/dm41x_logo.svg" align="left" width="150" height="150">
+<br clear="left"/>
 
 This program is used in conjunction with the DM41X calculator.
 For more information about the DM41X, see https://www.swissmicros.com
