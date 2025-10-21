@@ -19,7 +19,7 @@ Example: 41x -f mystatefile.d41 -a MYFILE
 
 This would extract the XM ASCII file "MYFILE" from the statefile "mystatefile.d41".
 
-Version: 0.1 (2020-03-27)
+Version: 0.2 (2025-01-21)
 License: Public domain
 
 HELPTEXT
@@ -104,20 +104,64 @@ filechars.each do |char|
   output += chrarray[char.to_i(16)]
 end
 
-output.sub!(/#{$ascii}.*/, '')
-output.sub!(/.*ÿ/, '')
-output = output[0...-7]
-o = ""
-while output.length > 0
-  o += output[output.length-7,output.length]
-  output = output[0...-7]
-end
-o.gsub!(/ο/, '')
-o.gsub!(/█/, '')
+# Find the filename with padding (filenames are padded to 7 chars with spaces)
+filename_padded = $ascii + " " * (7 - $ascii.length)
+file_pos = output.index(filename_padded)
 
+if file_pos.nil?
+  puts "Error: File '#{$ascii}' not found in state file"
+  exit 1
+end
+
+# Extract content before the filename
+# File format: ...[previous file]κ[current file content]κ[current filename+padding]...
+# We need the content between two κ markers
+chunk_start = [file_pos - 500, 0].max
+chunk = output[chunk_start...file_pos]
+
+# Find all κ positions in the chunk
+kappa_positions = []
+chunk.chars.each_with_index do |c, i|
+  kappa_positions << i if c == chrarray[10]
+end
+
+if kappa_positions.length >= 2
+  # Content is between the second-to-last and last κ
+  start = kappa_positions[-2] + 1
+  finish = kappa_positions[-1]
+  o = chunk[start...finish]
+elsif kappa_positions.length == 1
+  # Only one κ, this must be first file
+  # Look for ÿ (chr 255) which marks the boundary before file data
+  content_before_kappa = chunk[0...kappa_positions[0]]
+  last_ff = content_before_kappa.rindex(chrarray[255])
+
+  if last_ff
+    # Content starts after ÿ, skip padding
+    temp = content_before_kappa[last_ff+1..-1]
+    temp = temp.sub(/^█+/, '')  # Skip leading █ (chr 0) padding
+    temp = temp.sub(/^#{chrarray[7]}/, '')  # Skip η (chr 7) if present
+    o = temp
+  else
+    # No ÿ found, use everything before κ
+    o = content_before_kappa
+  end
+else
+  # No κ found
+  o = chunk
+end
+
+# Remove trailing padding
+o = o.sub(/[#{chrarray[0]}#{chrarray[16]}]+$/, '')
+
+# Convert line separators to newlines
 for i in 1..12
   o.gsub!(/#{chrarray[i]}/, "\n")
 end
+
+# Remove padding characters
+o.gsub!(/ο/, '')
+o.gsub!(/█/, '')
 
 o.gsub!(/^\n/, '')
 
